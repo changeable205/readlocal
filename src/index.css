@@ -1,0 +1,560 @@
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Font size variants applied to the article wrapper ── */
+article.prose-sm  { font-size: 14px; }
+article.prose-md  { font-size: 16px; }
+article.prose-lg  { font-size: 19px; }
+
+/* ── Base prose resets (shared light + dark) ── */
+article.prose-reading,
+article.prose-reading-dark {
+  font-family: 'Georgia', 'Lora', serif;
+  line-height: 1.8;
+  color: inherit;
+  max-width: 100%;
+  word-break: break-word;
+}
+
+/* ── Line breaks (single Enter = soft break) ── */
+article.prose-reading br,
+article.prose-reading-dark br {
+  display: block;
+  min-height: 1.25em;
+  content: "";
+  margin-bottom: 0.25em;
+}
+
+/* Two consecutive line breaks = paragraph break */
+article.prose-reading br + br,
+article.prose-reading-dark br + br {
+  display: block;
+  margin-top: 0.5em;
+}
+
+/* Three+ consecutive line breaks = larger spacing */
+article.prose-reading br + br + br,
+article.prose-reading-dark br + br + br {
+  display: block;
+  margin-top: 1em;
+}
+
+/* ── Headings ── */
+article.prose-reading h1,
+article.prose-reading-dark h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2em;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: 0.6em;
+}
+article.prose-reading h2,
+article.prose-reading-dark h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.45em;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+article.prose-reading h3,
+article.prose-reading-dark h3 {
+  font-size: 1.2em;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.8em;
+  margin-bottom: 0.4em;
+}
+article.prose-reading h4,
+article.prose-reading h5,
+article.prose-reading h6,
+article.prose-reading-dark h4,
+article.prose-reading-dark h5,
+article.prose-reading-dark h6 {
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.4em;
+}
+
+/* ── Body text ── */
+article.prose-reading p,
+article.prose-reading-dark p {
+  margin-top: 0;
+  margin-bottom: 1.1em;
+}
+
+/* ── Links ── */
+article.prose-reading a {
+  color: #0d9488;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+article.prose-reading a:hover { color: #0f766e; }
+article.prose-reading-dark a {
+  color: #2dd4bf;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+article.prose-reading-dark a:hover { color: #5eead4; }
+
+/* ── Blockquote ── */
+article.prose-reading blockquote {
+  border-left: 3px solid #d4a017;
+  margin: 1.5em 0;
+  padding: 0.6em 1.2em;
+  background: #faf7ef;
+  color: #6b6055;
+  font-style: italic;
+  border-radius: 0 6px 6px 0;
+}
+article.prose-reading-dark blockquote {
+  border-left: 3px solid #d4a017;
+  margin: 1.5em 0;
+  padding: 0.6em 1.2em;
+  background: rgba(255,255,255,0.03);
+  color: #b0a898;
+  font-style: italic;
+  border-radius: 0 6px 6px 0;
+}
+
+/* ── Code ── */
+article.prose-reading code,
+article.prose-reading-dark code {
+  font-family: 'JetBrains Mono', 'Menlo', monospace;
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+}
+article.prose-reading code {
+  background: #f4ede0;
+  color: #3d3530;
+}
+article.prose-reading-dark code {
+  background: rgba(255,255,255,0.07);
+  color: #d0c9bf;
+}
+
+article.prose-reading pre,
+article.prose-reading-dark pre {
+  border-radius: 10px;
+  padding: 1.1em 1.4em;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 0.875em;
+  line-height: 1.65;
+}
+article.prose-reading pre {
+  background: #2b2520;
+  color: #ecddd0;
+  box-shadow: 0 2px 8px rgba(16,14,11,0.10);
+}
+article.prose-reading-dark pre {
+  background: rgba(255,255,255,0.04);
+  color: #d0c9bf;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+article.prose-reading pre code,
+article.prose-reading-dark pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 1em;
+  color: inherit;
+}
+
+/* ── Syntax highlighting — light theme (warm dark background on light page) ── */
+article.prose-reading pre code.hljs {
+  color: #ecddd0;
+}
+article.prose-reading pre code .hljs-comment,
+article.prose-reading pre code .hljs-quote        { color: #8a7f70; font-style: italic; }
+article.prose-reading pre code .hljs-keyword,
+article.prose-reading pre code .hljs-selector-tag,
+article.prose-reading pre code .hljs-built_in,
+article.prose-reading pre code .hljs-name,
+article.prose-reading pre code .hljs-tag          { color: #f0a070; }
+article.prose-reading pre code .hljs-string,
+article.prose-reading pre code .hljs-title,
+article.prose-reading pre code .hljs-section,
+article.prose-reading pre code .hljs-attribute,
+article.prose-reading pre code .hljs-literal,
+article.prose-reading pre code .hljs-template-tag,
+article.prose-reading pre code .hljs-template-variable,
+article.prose-reading pre code .hljs-type,
+article.prose-reading pre code .hljs-addition      { color: #a8d8a8; }
+article.prose-reading pre code .hljs-deletion,
+article.prose-reading pre code .hljs-selector-attr,
+article.prose-reading pre code .hljs-selector-pseudo,
+article.prose-reading pre code .hljs-meta          { color: #e07070; }
+article.prose-reading pre code .hljs-doctag        { color: #8a7f70; }
+article.prose-reading pre code .hljs-attr          { color: #f0c070; }
+article.prose-reading pre code .hljs-symbol,
+article.prose-reading pre code .hljs-bullet,
+article.prose-reading pre code .hljs-link          { color: #70c0d8; }
+article.prose-reading pre code .hljs-emphasis      { font-style: italic; }
+article.prose-reading pre code .hljs-strong        { font-weight: bold; }
+article.prose-reading pre code .hljs-number        { color: #c8a870; }
+article.prose-reading pre code .hljs-variable,
+article.prose-reading pre code .hljs-selector-id,
+article.prose-reading pre code .hljs-title.class_  { color: #78c8e0; }
+article.prose-reading pre code .hljs-title.function_ { color: #d8b870; }
+article.prose-reading pre code .hljs-params        { color: #ecddd0; }
+article.prose-reading pre code .hljs-regexp        { color: #c8d870; }
+article.prose-reading pre code .hljs-punctuation   { color: #b0a898; }
+article.prose-reading pre code .hljs-operator      { color: #f0a878; }
+
+/* ── Syntax highlighting — dark theme ── */
+article.prose-reading-dark pre code.hljs {
+  color: #d0c9bf;
+}
+article.prose-reading-dark pre code .hljs-comment,
+article.prose-reading-dark pre code .hljs-quote        { color: #6b6055; font-style: italic; }
+article.prose-reading-dark pre code .hljs-keyword,
+article.prose-reading-dark pre code .hljs-selector-tag,
+article.prose-reading-dark pre code .hljs-built_in,
+article.prose-reading-dark pre code .hljs-name,
+article.prose-reading-dark pre code .hljs-tag          { color: #e8905a; }
+article.prose-reading-dark pre code .hljs-string,
+article.prose-reading-dark pre code .hljs-title,
+article.prose-reading-dark pre code .hljs-section,
+article.prose-reading-dark pre code .hljs-attribute,
+article.prose-reading-dark pre code .hljs-literal,
+article.prose-reading-dark pre code .hljs-template-tag,
+article.prose-reading-dark pre code .hljs-template-variable,
+article.prose-reading-dark pre code .hljs-type,
+article.prose-reading-dark pre code .hljs-addition      { color: #88c888; }
+article.prose-reading-dark pre code .hljs-deletion,
+article.prose-reading-dark pre code .hljs-selector-attr,
+article.prose-reading-dark pre code .hljs-selector-pseudo,
+article.prose-reading-dark pre code .hljs-meta          { color: #c86868; }
+article.prose-reading-dark pre code .hljs-doctag        { color: #6b6055; }
+article.prose-reading-dark pre code .hljs-attr          { color: #d8a850; }
+article.prose-reading-dark pre code .hljs-symbol,
+article.prose-reading-dark pre code .hljs-bullet,
+article.prose-reading-dark pre code .hljs-link          { color: #58b0c8; }
+article.prose-reading-dark pre code .hljs-emphasis      { font-style: italic; }
+article.prose-reading-dark pre code .hljs-strong        { font-weight: bold; }
+article.prose-reading-dark pre code .hljs-number        { color: #b89858; }
+article.prose-reading-dark pre code .hljs-variable,
+article.prose-reading-dark pre code .hljs-selector-id,
+article.prose-reading-dark pre code .hljs-title.class_  { color: #58b8d0; }
+article.prose-reading-dark pre code .hljs-title.function_ { color: #c8a858; }
+article.prose-reading-dark pre code .hljs-params        { color: #d0c9bf; }
+article.prose-reading-dark pre code .hljs-regexp        { color: #b8c858; }
+article.prose-reading-dark pre code .hljs-punctuation   { color: #8a7f70; }
+article.prose-reading-dark pre code .hljs-operator      { color: #e09068; }
+
+/* ── Code block copy button ── */
+.rl-code-block { position: relative; }
+
+article.prose-reading .rl-copy-btn,
+article.prose-reading-dark .rl-copy-btn {
+  position: absolute; top: 0.55rem; right: 0.6rem;
+  display: flex; align-items: center;
+  padding: 0.22rem 0.55rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.02em;
+  border-radius: 6px; cursor: pointer;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  transition: color 150ms ease, background 150ms ease, border-color 150ms ease;
+  user-select: none; white-space: nowrap; z-index: 1;
+}
+article.prose-reading .rl-copy-btn {
+  color: rgba(236,221,208,0.60); background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+article.prose-reading .rl-copy-btn:hover {
+  color: rgba(236,221,208,0.90); background: rgba(255,255,255,0.13);
+  border-color: rgba(255,255,255,0.18);
+}
+article.prose-reading .rl-copy-btn.rl-copied {
+  color: #2dd4bf; background: rgba(45,212,191,0.12);
+  border-color: rgba(45,212,191,0.25);
+}
+article.prose-reading-dark .rl-copy-btn {
+  color: rgba(208,201,191,0.55); background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+article.prose-reading-dark .rl-copy-btn:hover {
+  color: rgba(208,201,191,0.90); background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.14);
+}
+article.prose-reading-dark .rl-copy-btn.rl-copied {
+  color: #2dd4bf; background: rgba(45,212,191,0.10);
+  border-color: rgba(45,212,191,0.22);
+}
+
+/* ── Find in document highlights ── */
+mark.rl-highlight {
+  background: rgba(251, 191, 36, 0.35);
+  color: inherit;
+  border-radius: 2px;
+}
+mark.rl-highlight-active {
+  background: rgba(251, 191, 36, 0.75);
+  outline: 2px solid rgba(251, 191, 36, 0.8);
+  border-radius: 2px;
+}
+
+/* ── Lists ── */
+article.prose-reading ul,
+article.prose-reading-dark ul { list-style: disc; padding-left: 1.6em; margin: 0.8em 0; }
+article.prose-reading ol,
+article.prose-reading-dark ol { list-style: decimal; padding-left: 1.6em; margin: 0.8em 0; }
+article.prose-reading li,
+article.prose-reading-dark li { margin-bottom: 0.35em; }
+
+/* ── HR ── */
+article.prose-reading hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #d0c9bf, transparent);
+  margin: 2.5em 0;
+}
+article.prose-reading-dark hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.10), transparent);
+  margin: 2.5em 0;
+}
+
+/* ── Table ── */
+article.prose-reading table,
+article.prose-reading-dark table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+article.prose-reading th,
+article.prose-reading-dark th {
+  font-weight: 600;
+  padding: 0.6em 1em;
+  text-align: left;
+}
+article.prose-reading th { background: #f4ede0; color: #3d3530; }
+article.prose-reading-dark th { background: rgba(255,255,255,0.06); color: #d0c9bf; }
+article.prose-reading td,
+article.prose-reading-dark td {
+  padding: 0.55em 1em;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+article.prose-reading-dark td { border-top-color: rgba(255,255,255,0.05); }
+article.prose-reading tr:hover td { background: rgba(0,0,0,0.02); }
+article.prose-reading-dark tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── Images ── */
+article.prose-reading img,
+article.prose-reading-dark img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+/* ── Headings color ── */
+article.prose-reading h1,
+article.prose-reading h2,
+article.prose-reading h3,
+article.prose-reading h4 { color: #1c1915; }
+article.prose-reading-dark h1,
+article.prose-reading-dark h2,
+article.prose-reading-dark h3,
+article.prose-reading-dark h4 { color: #faf7ef; }
+
+article.prose-reading p,
+article.prose-reading li { color: #3d3530; }
+article.prose-reading-dark p,
+article.prose-reading-dark li { color: #d0c9bf; }
+
+/* ── Print Styles ── */
+
+/* ── Print Styles ── */
+@media print {
+  /* Remove browser default header/footer (date, filename, page numbers) */
+  @page {
+    margin: 0;
+    size: A4;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide header (logo, theme toggle) */
+  header {
+    display: none !important;
+  }
+
+  /* Hide sidebar */
+  aside {
+    display: none !important;
+  }
+
+  /* Hide all toolbars and floating controls */
+  .floating-controls,
+  [role="toolbar"],
+  [role="navigation"] {
+    display: none !important;
+  }
+
+  /* Hide all buttons */
+  button,
+  [role="button"] {
+    display: none !important;
+  }
+
+  /* Hide input elements */
+  input {
+    display: none !important;
+  }
+
+  /* Hide toast notifications */
+  .toast-notification {
+    display: none !important;
+  }
+
+  /* Hide breadcrumb */
+  .breadcrumb {
+    display: none !important;
+  }
+
+  /* Hide the drag overlay */
+  [class*="pointer-events-none"] {
+    display: none !important;
+  }
+
+  /* Show only the main content area */
+  main {
+    display: block !important;
+  }
+
+  /* Show the scrollable container */
+  main > div {
+    display: block !important;
+  }
+
+  /* Show the content wrapper */
+  main > div > div {
+    display: block !important;
+  }
+
+  /* Article - the actual markdown content */
+  article {
+    display: block !important;
+    padding: 1.5cm !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Light theme colors */
+  .prose-reading {
+    color: #1c1915 !important;
+    background: #ffffff !important;
+  }
+
+  /* Dark theme colors - preserve dark appearance */
+  .prose-reading-dark {
+    color: #faf7ef !important;
+    background: #100e0b !important;
+  }
+
+  /* Preserve syntax highlighting colors */
+  .hljs {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Code block backgrounds */
+  pre {
+    background-color: currentColor !important;
+    opacity: 1 !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+    page-break-inside: avoid;
+  }
+
+  code {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Images */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+
+  /* Prevent orphaned headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  /* Table handling */
+  table {
+    page-break-inside: avoid;
+  }
+
+  /* Page breaks */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  /* Remove all shadows for clean print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Links */
+  a {
+    color: inherit !important;
+    text-decoration: underline;
+  }
+
+  /* Remove border radius */
+  * {
+    border-radius: 0 !important;
+  }
+
+  /* Hide empty div at bottom */
+  .h-24 {
+    display: none !important;
+  }
+
+  /* Make line breaks visible in editor preview */
+  article.prose-reading br,
+  article.prose-reading-dark br {
+    display: block !important;
+    min-height: 1.25em !important;
+    content: "" !important;
+  }
+
+  article.prose-reading br + br,
+  article.prose-reading-dark br + br {
+    display: block !important;
+    margin-top: 0.5em !important;
+  }
+
+  article.prose-reading br + br + br,
+  article.prose-reading-dark br + br + br {
+    display: block !important;
+    margin-top:1em !important;
+  }
+}

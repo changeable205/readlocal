@@ -1,0 +1,29 @@
+[package]
+name = "readlocal-desktop"
+version = "1.0.0"
+description = "Local-first read-only Markdown reader (raw source + rendered preview) built with Tauri 2."
+authors = ["ReadLocal Desktop"]
+edition = "2021"
+rust-version = "1.77.2"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Native recursive filesystem watcher for external-change auto-refresh.
+notify = "6"
+# Native save-file sheet (used for HTML/PDF export).
+rfd = "0.15"
+# Decode PDF bytes sent from the webview.
+base64 = "0.22"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
