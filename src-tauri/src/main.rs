@@ -9,6 +9,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::fs;
+#[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
@@ -329,7 +330,10 @@ fn main() {
         .build(tauri::generate_context!())
         .expect("error while building ReadLocal Desktop")
         .run(|app, event| {
+            let _ = (&app, &event);
             // macOS Finder double-click / "Open With" while running (and cold open).
+            // RunEvent::Opened is macOS-only; Windows passes files as CLI args.
+            #[cfg(target_os = "macos")]
             if let tauri::RunEvent::Opened { urls } = event {
                 let state = app.state::<AppState>();
                 for url in urls {
