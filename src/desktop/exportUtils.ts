@@ -51,11 +51,41 @@ ${extraCss ? `<style>${extraCss}</style>` : ''}
 <body><article>${article.innerHTML}</article></body></html>`;
 }
 
+/**
+ * Clone the rendered article and embed every image as a base64 data URL so the
+ * exported standalone HTML / PDF stays self-contained (asset-protocol URLs only
+ * work inside the app). Mermaid (inline SVG) and KaTeX are already inline.
+ */
+async function withInlinedImages(article: HTMLElement): Promise<HTMLElement> {
+  const liveImgs = Array.from(article.querySelectorAll('img'));
+  const clone = article.cloneNode(true) as HTMLElement;
+  const cloneImgs = Array.from(clone.querySelectorAll('img'));
+  // Carry the already-resolved (asset-protocol) absolute src onto the clone.
+  liveImgs.forEach((li, i) => { if (cloneImgs[i]) cloneImgs[i].src = li.src; });
+
+  await Promise.all(cloneImgs.map(async (img) => {
+    const src = img.src;
+    if (!src || /^data:/i.test(src)) return;
+    try {
+      const blob = await fetch(src).then((r) => r.blob());
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+      img.src = dataUrl;
+    } catch { /* keep original src */ }
+  }));
+  return clone;
+}
+
 /** Export the live rendered article (KaTeX + Mermaid already inline) as standalone .html. */
 export async function exportHtml(fileName: string, article: HTMLElement | null): Promise<void> {
   if (!article) throw new Error('Nothing rendered to export');
   const base = fileName.replace(/\.(md|markdown|mdx|txt)$/i, '');
-  const doc = standaloneHtml(base, article);
+  const inlined = await withInlinedImages(article);
+  const doc = standaloneHtml(base, inlined);
   const outName = `${base}.html`;
   if (isTauri()) {
     // Tauri v2 maps JS camelCase keys onto the snake_case Rust command args.
@@ -83,7 +113,6 @@ export async function exportPdf(fileName: string, _theme: 'light' | 'dark'): Pro
   // side/top space equivalent to the browser's default print margins so line
   // wrapping matches "print exported HTML to PDF".
   const printCss = 'article{max-width:none !important; padding:40px 70px 56px !important;}';
-  const html = standaloneHtml(base, live, printCss);
 
   if (isTauri()) {
     if (/windows/i.test(navigator.userAgent)) {
@@ -94,11 +123,15 @@ export async function exportPdf(fileName: string, _theme: 'light' | 'dark'): Pro
       return;
     }
     // macOS: native offscreen WebKit pipeline (WKWebView cannot window.print).
+    const inlined = await withInlinedImages(live);
+    const html = standaloneHtml(base, inlined, printCss);
     await invoke<string | null>('html_to_pdf_dialog', {
       defaultName: `${base}.pdf`,
       html,
     });
   } else {
+    const inlined = await withInlinedImages(live);
+    const html = standaloneHtml(base, inlined, printCss);
     // Browser fallback: open the document and let the user print to PDF.
     const w = window.open('', '_blank');
     if (w) {

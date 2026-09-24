@@ -1,7 +1,7 @@
 {
   "name": "readlocal-desktop",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "description": "ReadLocal Desktop — a local-first, read-only Markdown reader built with Tauri 2 (raw source + rendered preview, file tree, file watching, HTML/PDF export).",
   "scripts": {

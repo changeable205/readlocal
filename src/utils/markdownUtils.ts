@@ -94,7 +94,9 @@ DOMPurify.addHook('afterSanitizeAttributes', (node) => {
   }
 
   const src = node.getAttribute('src');
-  if (src !== null && !/^(https?:|\/)/i.test(src)) {
+  // Keep local relative/absolute images and data URIs; only strip executable
+  // schemes. Local <img> src is resolved to the asset protocol by the component.
+  if (src !== null && /^\s*(javascript|vbscript)\s*:/i.test(src)) {
     node.removeAttribute('src');
   }
 

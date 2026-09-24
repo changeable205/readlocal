@@ -117,9 +117,12 @@ fn build_node(abs: &Path, root: &Path, _is_root: bool) -> Option<DiskNode> {
     let mut children = dirs;
     children.extend(files);
 
-    // Keep every directory so the sidebar mirrors the real on-disk folder tree
-    // (sub-folders that currently contain no Markdown are still shown, just with
-    // no Markdown leaves). Only hidden (dot-prefixed) entries are skipped above.
+    // Prune directories that contain no Markdown at any depth: only Markdown
+    // files and the folders that lead to them are shown.
+    if children.is_empty() {
+        return None;
+    }
+
     Some(DiskNode {
         name,
         abs_path: abs.to_string_lossy().to_string(),
@@ -299,6 +302,19 @@ fn initial_launch_file() -> Option<String> {
 
 fn main() {
     let base = tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            // A second launch (e.g. double-clicking an associated .md on Windows).
+            if let Some(path) = args
+                .iter()
+                .find(|a| is_markdown_name(a) && Path::new(a).is_file())
+            {
+                let _ = app.emit("open-file", path.clone());
+            }
+            if let Some(w) = app.get_webview_window("main") {
+                let _ = w.unminimize();
+                let _ = w.set_focus();
+            }
+        }))
         .plugin(tauri_plugin_dialog::init())
         .manage(AppState {
             watcher: Mutex::new(None),

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Search, FileText, ChevronRight, ChevronDown, Folder, FolderOpen, X, HardDrive } from 'lucide-react';
 import { Theme } from '../types';
 import { DiskNode } from './types';
@@ -25,17 +25,24 @@ function flattenFiles(node: DiskNode, out: DiskNode[] = []): DiskNode[] {
   return out;
 }
 
+/** True when `dir` is the selected file or one of its containing folders. */
+function isAncestor(dir: string, selected: string | null): boolean {
+  if (!selected) return false;
+  if (dir === selected) return true;
+  return selected.startsWith(dir + '/') || selected.startsWith(dir + '\\');
+}
+
 interface NodeProps {
   node: DiskNode;
   depth: number;
   selectedAbsPath: string | null;
   dark: boolean;
+  isOpen: (dirPath: string) => boolean;
+  onToggleDir: (dirPath: string) => void;
   onSelectFile: (absPath: string) => void;
 }
 
-function TreeItem({ node, depth, selectedAbsPath, dark, onSelectFile }: NodeProps) {
-  const [open, setOpen] = useState(true);
-
+function TreeItem({ node, depth, selectedAbsPath, dark, isOpen, onToggleDir, onSelectFile }: NodeProps) {
   if (node.kind === 'file') {
     const selected = node.absPath === selectedAbsPath;
     return (
@@ -69,10 +76,12 @@ function TreeItem({ node, depth, selectedAbsPath, dark, onSelectFile }: NodeProp
     );
   }
 
+  const open = isOpen(node.absPath);
   return (
     <div role="group">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => onToggleDir(node.absPath)}
+        aria-expanded={open}
         className={`w-full flex items-center gap-1.5 py-[7px] pr-3 rounded-lg text-[11px] font-sans font-semibold uppercase tracking-[0.07em] transition-all duration-150 ${dark ? 'text-ink-500 hover:text-ink-300 hover:bg-white/[0.04]' : 'text-ink-400 hover:text-ink-600 hover:bg-ink-100/70'}`}
         style={{ paddingLeft: `${10 + depth * 14}px` }}
       >
@@ -89,6 +98,8 @@ function TreeItem({ node, depth, selectedAbsPath, dark, onSelectFile }: NodeProp
           depth={depth + 1}
           selectedAbsPath={selectedAbsPath}
           dark={dark}
+          isOpen={isOpen}
+          onToggleDir={onToggleDir}
           onSelectFile={onSelectFile}
         />
       ))}
@@ -101,6 +112,24 @@ export default function DesktopSidebar({
 }: SidebarProps) {
   const dark = theme === 'dark';
   const [query, setQuery] = useState('');
+  // Manual expand/collapse overrides keyed by absolute dir path. Anything not
+  // listed here defaults to "open only if it contains the selected file".
+  const [manual, setManual] = useState<Record<string, boolean>>({});
+
+  const isOpen = useCallback(
+    (dirPath: string): boolean => {
+      if (dirPath in manual) return manual[dirPath];
+      return isAncestor(dirPath, selectedAbsPath);
+    },
+    [manual, selectedAbsPath]
+  );
+
+  const toggleDir = useCallback((dirPath: string) => {
+    setManual((prev) => {
+      const current = dirPath in prev ? prev[dirPath] : isAncestor(dirPath, selectedAbsPath);
+      return { ...prev, [dirPath]: !current };
+    });
+  }, [selectedAbsPath]);
 
   const total = useMemo(() => (tree ? countFiles(tree) : 0), [tree]);
   const searchResults = useMemo(() => {
@@ -120,7 +149,7 @@ export default function DesktopSidebar({
         <button
           onClick={onChangeFolder}
           title={rootPath ?? 'Open a folder'}
-          className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors duration-150 ${dark ? 'bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.07]' : 'bg-white hover:bg-cream-100 border border-ink-200/60 shadow-inner-sm'}`}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-left transition-colors duration-15 ${dark ? 'bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.07]' : 'bg-white hover:bg-cream-100 border border-ink-200/60 shadow-inner-sm'}`}
         >
           <HardDrive size={13} className={dark ? 'text-teal-400' : 'text-teal-600'} strokeWidth={2} />
           <span className={`text-[12px] font-sans font-semibold truncate flex-1 ${dark ? 'text-cream-200' : 'text-ink-800'}`}>
@@ -131,7 +160,7 @@ export default function DesktopSidebar({
 
       {/* Search */}
       <div className={`px-3 pt-2 pb-2 border-b ${dark ? 'border-white/[0.05]' : 'border-ink-100'}`}>
-        <div className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-colors duration-150 ${dark ? 'bg-white/[0.05] border border-white/[0.07] focus-within:border-teal-500/40' : 'bg-white border border-ink-200/60 focus-within:border-teal-400/50 shadow-inner-sm'}`}>
+        <div className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-colors duration-15 ${dark ? 'bg-white/[0.05] border border-white/[0.07] focus-within:border-teal-500/40' : 'bg-white border border-ink-200/60 focus-within:border-teal-400/50 shadow-inner-sm'}`}>
           <Search size={12} strokeWidth={2.5} className={dark ? 'text-ink-600' : 'text-ink-300'} />
           <input
             value={query}
@@ -140,7 +169,7 @@ export default function DesktopSidebar({
             className={`flex-1 text-[12.5px] font-sans bg-transparent outline-none ${dark ? 'text-cream-200 placeholder:text-ink-600' : 'text-ink-700 placeholder:text-ink-300'}`}
           />
           {query && (
-            <button onClick={() => setQuery('')} aria-label="Clear search" className={`rounded ${dark ? 'text-ink-600 hover:text-ink-300' : 'text-ink-300 hover:text-ink-500'}`}>
+            <button onClick={() => setQuery('')} aria-label="Clear search" className={`rounded ${dark ? 'text-ink-600 hover:text-ink-300' : 'text-ink-300'}`}>
               <X size={11} strokeWidth={2.5} />
             </button>
           )}
@@ -164,7 +193,8 @@ export default function DesktopSidebar({
             </div>
           ) : (
             searchResults.map((f) => (
-              <TreeItem key={f.absPath} node={f} depth={0} selectedAbsPath={selectedAbsPath} dark={dark} onSelectFile={onSelectFile} />
+              <TreeItem key={f.absPath} node={f} depth={0} selectedAbsPath={selectedAbsPath} dark={dark}
+                isOpen={isOpen} onToggleDir={toggleDir} onSelectFile={onSelectFile} />
             ))
           )
         ) : (
@@ -175,6 +205,8 @@ export default function DesktopSidebar({
               depth={0}
               selectedAbsPath={selectedAbsPath}
               dark={dark}
+              isOpen={isOpen}
+              onToggleDir={toggleDir}
               onSelectFile={onSelectFile}
             />
           ))

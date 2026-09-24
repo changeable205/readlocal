@@ -4,6 +4,7 @@ import { MarkdownFile, Theme, FontSize, ReadingWidth } from '../types';
 import { renderMarkdown } from '../utils/markdownUtils';
 import { renderMermaidIn } from '../utils/mermaidUtils';
 import { parseFrontmatter } from '../utils/frontmatterUtils';
+import { resolveImageSrc } from '../desktop/assetUtils';
 
 interface MarkdownPreviewProps {
   file: MarkdownFile;
@@ -132,6 +133,21 @@ export default function MarkdownPreview({
       console.warn('Mermaid render error:', err);
     });
   }, [html, dark]);
+
+  // Resolve local (relative) image references against the Markdown file's
+  // directory and load them through the Tauri asset protocol.
+  useEffect(() => {
+    const article = containerRef.current?.querySelector('[data-printable]');
+    if (!article) return;
+    article.querySelectorAll('img').forEach((img) => {
+      const raw = img.getAttribute('src');
+      if (!raw) return;
+      try {
+        const url = resolveImageSrc(file.id, raw);
+        if (url && img.getAttribute('src') !== url) img.src = url;
+      } catch { /* ignore bad refs */ }
+    });
+  }, [html, file.id]);
 
   // Keyboard shortcut: Ctrl+F / Cmd+F to open search, Escape to close
   useEffect(() => {
